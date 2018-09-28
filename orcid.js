@@ -7,7 +7,7 @@
 function createORCIDProfile(orcidID) {
   var ORCIDLink = "https://pub.orcid.org/v2.0/" + orcidID + "/works";
 
-   fetch(ORCIDLink,
+  fetch(ORCIDLink,
     {
       headers: {
         "Accept": "application/orcid+json"
@@ -36,10 +36,10 @@ function createORCIDProfile(orcidID) {
           var output2013 = "";
           var outputEarlier = "";
           var loading = "true";
-         
+
 
           for (var i in data.group) {
-            
+
             //PAPER NAME
             if (data.group[i]["work-summary"]["0"].title.title.value != null) {
               var publicationName = data.group[i]["work-summary"]["0"].title.title.value;
@@ -67,7 +67,7 @@ function createORCIDProfile(orcidID) {
               var doiReference = "";
             }
 
-       
+
 
             //JOURNAL NAME
             var putcode = data.group[i]["work-summary"]["0"]["put-code"];
@@ -79,43 +79,43 @@ function createORCIDProfile(orcidID) {
               output2018 += " (" + publicationYear + ") ";
               output2018 += "<span id='publication_" + i + "'> </span> <em id = 'author_" + i + "'></em>";
               output2018 += " <a href='https://doi.org/" + doiReference + "'> " + doiReference + "</a></p>";
-              
+
             } if (publicationYear == 2017) {
               output2017 += "<p><strong>" + publicationName + "</strong>";
               output2017 += " (" + publicationYear + ") </em>";
               output2017 += "<span id='publication_" + i + "'> </span> <em id = 'author_" + i + "'></em>";
               output2017 += " <a href='https://doi.org/" + doiReference + "'> " + doiReference + "</a></p>";
-           
+
             } if (publicationYear == 2016) {
               output2016 += "<p><strong>" + publicationName + "</strong>";
               output2016 += " (" + publicationYear + ") </em></span>";
               output2016 += "<span id='publication_" + i + "'> </span> <em id = 'author_" + i + "'></em>";
               output2016 += " <a href='https://doi.org/" + doiReference + "'> " + doiReference + "</a></p>";
-           
+
             } if (publicationYear == 2015) {
               output2015 += "<p><strong>" + publicationName + "</strong>";
               output2015 += " (" + publicationYear + ") </em></span>";
               output2015 += "<span id='publication_" + i + "'> </span> <em id = 'author_" + i + "'></em>";
               output2015 += " <a href='https://doi.org/" + doiReference + "'> " + doiReference + "</a></p>";
-           
+
             } if (publicationYear == 2014) {
               output2014 += "<p><strong>" + publicationName + "</strong>";
               output2014 += " (" + publicationYear + ") </em></span>";
               output2014 += "<span id='publication_" + i + "'> </span> <em id = 'author_" + i + "'></em>";
               output2014 += " <a href='https://doi.org/" + doiReference + "'> " + doiReference + "</a></p>";
-          
+
             } if (publicationYear == 2013) {
               output2013 += "<p><strong>" + publicationName + "</strong>";
               output2013 += " (" + publicationYear + ") </em></span>";
               output2013 += "<span id='publication_" + i + "'> </span> <em id = 'author_" + i + "'></em>";
               output2013 += " <a href='https://doi.org/" + doiReference + "'> " + doiReference + "</a></p>";
-            
+
             } if (publicationYear < 2013) {
               outputEarlier += "<p><strong>" + publicationName + "</strong>";
               outputEarlier += " (" + publicationYear + ") </em></span>";
               outputEarlier += "<span id='publication_" + i + "'> </span> <em id = 'author_" + i + "'></em>";
               outputEarlier += " <a href='https://doi.org/" + doiReference + "'> " + doiReference + "</a></p>";
-          
+
             }
             getJournalTitleAndAuthors(orcidID, putcode, i);
 
@@ -131,45 +131,45 @@ function createORCIDProfile(orcidID) {
 
           if (output2018 == "") {
             var x = document.getElementById("element2018");
-              x.style.display = "none";
+            x.style.display = "none";
           }
 
           if (output2017 == "") {
             var x = document.getElementById("element2017");
-              x.style.display = "none";
+            x.style.display = "none";
           }
 
           if (output2016 == "") {
             var x = document.getElementById("element2016");
-              x.style.display = "none";
-          } 
-          
+            x.style.display = "none";
+          }
+
           if (output2015 == "") {
             var x = document.getElementById("element2015");
-              x.style.display = "none";
-          }   
+            x.style.display = "none";
+          }
 
           if (output2014 == "") {
             var x = document.getElementById("element2014");
-              x.style.display = "none";
-          }   
+            x.style.display = "none";
+          }
 
           if (output2013 == "") {
             var x = document.getElementById("element2013");
-              x.style.display = "none";
-          }   
+            x.style.display = "none";
+          }
 
           if (outputEarlier == "") {
             var x = document.getElementById("elementEarlier");
-              x.style.display = "none";
-          }   
+            x.style.display = "none";
+          }
 
           if (loading == "false") {
             var x = document.getElementById("loader");
             x.style.display = "none";
             var y = document.getElementById("myPublications");
             y.style.display = "";
-          }        
+          }
 
         });
       }
@@ -194,19 +194,24 @@ function getJournalTitleAndAuthors(orcidID, journalID, i) {
             response.status);
           return;
         }
+        
         response.json().then(function (data) {
+          //journal title
           if (data["journal-title"] != null) {
             var output = data["journal-title"].value + ".";
             document.getElementById("publication_" + i).innerHTML = document.getElementById("publication_" + i).innerHTML + output;
           }
+          //authors
+          var authors = "";
           if (data["contributors"]["contributor"]["length"] != 0) {
             for (var j in data["contributors"]["contributor"]) {
-                var authors = " " + data["contributors"]["contributor"][j]["credit-name"].value + " ";
-                console.log("Här är author!!!!! ", authors);
-                document.getElementById("author_" + i).innerHTML = document.getElementById("author_" + i).innerHTML + authors;
-              
-              
+              if (j == 0){
+              authors += " " + data["contributors"]["contributor"][j]["credit-name"].value;
+              } else {
+              authors += ", " + data["contributors"]["contributor"][j]["credit-name"].value;
+              }
             }
+            document.getElementById("author_" + i).innerHTML = document.getElementById("author_" + i).innerHTML + authors;
           } else {
             var authors = "";
           }
